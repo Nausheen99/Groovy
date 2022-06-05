@@ -9,14 +9,23 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModelProvider
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.fragment_playlist.*
+import okhttp3.OkHttpClient
 import petros.efthymiou.groovy.R
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import javax.inject.Inject
 
-
+@AndroidEntryPoint
 class PlaylistFragment : Fragment() {
 
     lateinit var viewModel: PlaylistViewModel
+    @Inject
     lateinit var viewModelFactory: PlaylistViewModelFactory
-    private val repository = PlaylistRepository()
+
+
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -25,13 +34,19 @@ class PlaylistFragment : Fragment() {
 
         setupViewModel()
 
+        viewModel.loader.observe(this as LifecycleOwner) { loading ->
+            when (loading) {
+                true -> loader.visibility = View.VISIBLE
+                else -> loader.visibility = View.INVISIBLE
+            }
 
+        }
 
         viewModel.playlists.observe(this as LifecycleOwner) { playlists ->
             if (playlists.getOrNull() != null) {
-                setupList(view, playlists.getOrNull()!!)}
+                setupList(view.findViewById(R.id.playlist_list), playlists.getOrNull()!!)}
                 else{
-                    //TODO
+                    print("yay")
                 }
             }
 
@@ -50,7 +65,6 @@ class PlaylistFragment : Fragment() {
     }
 
     private fun setupViewModel() {
-        viewModelFactory = PlaylistViewModelFactory(repository)
         viewModel = ViewModelProvider(this, viewModelFactory).get(PlaylistViewModel::class.java)
     }
 
