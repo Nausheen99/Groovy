@@ -2,9 +2,9 @@ package petros.efthymiou.groovy
 
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.IdlingRegistry
+import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
-import androidx.test.ext.junit.rules.ActivityScenarioRule
 import com.schibsted.spain.barista.assertion.BaristaRecyclerViewAssertions.assertRecyclerViewItemCount
 import com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed
 import com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertNotDisplayed
@@ -13,14 +13,11 @@ import org.hamcrest.CoreMatchers.allOf
 
 
 import org.junit.Test
-import org.junit.Rule
-import petros.efthymiou.groovy.placeholder.MainActivity
-import petros.efthymiou.groovy.playlist.idlingResourse
+import petros.efthymiou.groovy.playlist.idlingResource
 
 
-class playlistFeatures : BaseUITest(){
-    val mActivityRule = ActivityScenarioRule(MainActivity::class.java)
-    @Rule get
+class PlaylistFeatures : BaseUITest(){
+
     @Test
     fun displayScreenTitle() {
         assertDisplayed("Playlists")
@@ -47,7 +44,7 @@ class playlistFeatures : BaseUITest(){
 
     @Test
     fun displayLoader(){
-        IdlingRegistry.getInstance().unregister(idlingResourse)
+        IdlingRegistry.getInstance().unregister(idlingResource)
 
         assertDisplayed(R.id.loader)
     }
@@ -69,6 +66,12 @@ class playlistFeatures : BaseUITest(){
             .check(matches(isDisplayed()))
     }
 
+    @Test
+    fun navigateToDetailsScreen(){
+        onView(allOf(withId(R.id.playlist_image), isDescendantOfA(nthChildOf(withId(R.id.playlist_list), 0))))
+            .perform(click())
+        assertDisplayed(R.id.playlist_details_root)
+    }
 
 
 }

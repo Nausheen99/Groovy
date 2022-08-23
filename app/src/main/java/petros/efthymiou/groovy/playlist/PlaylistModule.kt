@@ -11,7 +11,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 
 val client = OkHttpClient()
-val idlingResourse = OkHttp3IdlingResource.create("okhttp", client)
+val idlingResource = OkHttp3IdlingResource.create("okhttp", client)
 
 
 @Module

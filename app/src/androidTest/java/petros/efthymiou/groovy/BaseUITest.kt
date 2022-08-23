@@ -3,29 +3,33 @@ package petros.efthymiou.groovy
 import android.view.View
 import android.view.ViewGroup
 import androidx.test.espresso.IdlingRegistry
+import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.hamcrest.Description
 import org.hamcrest.Matcher
 import org.hamcrest.TypeSafeMatcher
 import org.junit.After
 import org.junit.Before
+import org.junit.Rule
 import org.junit.runner.RunWith
-import petros.efthymiou.groovy.playlist.idlingResourse
+import petros.efthymiou.groovy.placeholder.MainActivity
+import petros.efthymiou.groovy.playlist.idlingResource
 
 @RunWith(AndroidJUnit4::class)
 
 abstract class BaseUITest  {
-
+    val mActivityRule = ActivityScenarioRule(MainActivity::class.java)
+        @Rule get
 
     @Before
     fun setup(){
-        IdlingRegistry.getInstance().register(idlingResourse)
+        IdlingRegistry.getInstance().register(idlingResource)
 
     }
 
     @After
     fun tearDown(){
-        IdlingRegistry.getInstance().unregister(idlingResourse)
+        IdlingRegistry.getInstance().unregister(idlingResource)
     }
 
     fun nthChildOf(parentMatcher: Matcher<View>, childPosition: Int): Matcher<View> {

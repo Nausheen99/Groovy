@@ -9,12 +9,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_playlist.*
-import okhttp3.OkHttpClient
 import petros.efthymiou.groovy.R
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -34,23 +32,31 @@ class PlaylistFragment : Fragment() {
 
         setupViewModel()
 
+        observeLoader()
+
+        observePlaylists(view)
+
+        return view
+    }
+
+    private fun observeLoader() {
         viewModel.loader.observe(this as LifecycleOwner) { loading ->
             when (loading) {
                 true -> loader.visibility = View.VISIBLE
-                else -> loader.visibility = View.INVISIBLE
+                else -> loader.visibility = View.GONE
             }
 
         }
+    }
 
+    private fun observePlaylists(view: View) {
         viewModel.playlists.observe(this as LifecycleOwner) { playlists ->
             if (playlists.getOrNull() != null) {
-                setupList(view.findViewById(R.id.playlist_list), playlists.getOrNull()!!)}
-                else{
-                    print("yay")
-                }
+                setupList(view.findViewById(R.id.playlist_list), playlists.getOrNull()!!)
+            } else {
+                print("yay")
             }
-
-        return view
+        }
     }
 
     private fun setupList(
@@ -60,7 +66,11 @@ class PlaylistFragment : Fragment() {
         with(view as RecyclerView) {
             layoutManager = LinearLayoutManager(context)
 
-            adapter = MyPlaylistRecyclerViewAdapter(playlists)
+            adapter = MyPlaylistRecyclerViewAdapter(playlists) { id ->
+                val action =
+                    PlaylistFragmentDirections.actionPlaylistFragmentToPlaylistDetailFragment(id)
+                findNavController().navigate(action)
+            }
         }
     }
 
